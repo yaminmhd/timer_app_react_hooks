@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Picker,
+  TextInput,
 } from 'react-native';
 import { Box } from 'components/commons';
 
@@ -50,6 +51,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
   },
+  textInput: {
+    marginTop: 10,
+    height: 50,
+    width: screen.width / 2,
+    borderColor: 'gray',
+    borderWidth: 1,
+    color: '#fff',
+    borderColor: '#89AAFF',
+    borderRadius: screen.width / 2,
+    textAlign: 'center',
+  },
 });
 
 //5 seconds -> 0:5 -> 00:05 , 90seconds -> 1:30 -> 01:030 -> 01:30
@@ -90,6 +102,7 @@ export default function App() {
   const [selectedMinutes, setSelectedMinutes] = useState('0');
   const [selectedSeconds, setSelectedSeconds] = useState('5');
   const [remainingSeconds, setRemainingSeconds] = useState(5);
+  const [delay, setDelay] = useState('Timer delay');
   const [isRunning, setIsRunning] = useState(false);
 
   const { minutes, seconds } = getRemaining(remainingSeconds);
@@ -97,15 +110,12 @@ export default function App() {
   const AVAILABLE_MINUTES = createArray(10);
   const AVAILABLE_SECONDS = createArray(60);
 
-  const action = useInterval(
-    () => {
-      setRemainingSeconds(remainingSeconds - 1)
-      if(remainingSeconds === 0){
-        stop()
-      }
-    },
-    1000,
-  );
+  const action = useInterval(() => {
+    setRemainingSeconds(remainingSeconds - 1);
+    if (remainingSeconds === 0) {
+      stop();
+    }
+  }, delay);
 
   const start = () => {
     setRemainingSeconds(
@@ -117,7 +127,9 @@ export default function App() {
 
   const stop = () => {
     setIsRunning(false);
-  }
+  };
+
+  const handleDelayChange = text => setDelay(parseInt(text));
 
   const renderPickers = () => {
     return (
@@ -175,6 +187,24 @@ export default function App() {
         <TouchableOpacity onPress={start} style={[styles.button]}>
           <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>
+      )}
+
+      {isRunning ? (
+        <TextInput
+          style={styles.textInput}
+          onChangeText={handleDelayChange}
+          value={delay}
+          clearTextOnFocus
+          editable={false}
+        />
+      ) : (
+        <TextInput
+          style={styles.textInput}
+          onChangeText={handleDelayChange}
+          value={delay}
+          clearTextOnFocus
+          editable={true}
+        />
       )}
     </Box>
   );
